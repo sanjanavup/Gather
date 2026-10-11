@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: gather-outing-planner
+    runtime: node
+    plan: starter
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: 22.16.0
+      - key: DB_PATH
+        value: /data/gather.db
+    disk:
+      name: gather-data
+      mountPath: /data
+      sizeGB: 1
