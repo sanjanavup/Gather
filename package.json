@@ -1,8 +1,1 @@
-{
-  "name": "gather-outing-planner",
-  "version": "1.0.0",
-  "private": true,
-  "description": "Shared outing planner with anonymous destination voting",
-  "scripts": {"start": "node server.js"},
-  "engines": {"node": ">=22.13.0"}
-}
+{"name":"gather-outing-planner","version":"2.0.0","private":true,"description":"Shared outing planner with RSVP, editing and optional anonymous votes","scripts":{"start":"node server.js"},"dependencies":{"@libsql/client":"^0.15.15"},"engines":{"node":">=22.13.0"}}

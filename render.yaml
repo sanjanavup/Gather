@@ -1,17 +1,17 @@
+# Existing free Render Web Service: keep using that service, no Blueprint needed.
+# Configure TURSO_DATABASE_URL and TURSO_AUTH_TOKEN in Render > Gather > Environment.
 services:
   - type: web
     name: gather-outing-planner
     runtime: node
-    plan: starter
+    plan: free
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /
     envVars:
       - key: NODE_VERSION
         value: 22.16.0
-      - key: DB_PATH
-        value: /data/gather.db
-    disk:
-      name: gather-data
-      mountPath: /data
-      sizeGB: 1
+      - key: TURSO_DATABASE_URL
+        sync: false
+      - key: TURSO_AUTH_TOKEN
+        sync: false

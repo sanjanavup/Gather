@@ -1,29 +1,22 @@
-# Gather - shared outing planner
+# Gather v3 — shared outing planner
 
-A working full-stack version of Gather with cross-device outing links, suggestions, guest names, and optional anonymous destination voting.
+Includes shareable outing links, place suggestions, optional anonymous voting, three-way RSVP (Going / Maybe / Can't make it), organizer-only editing, automatic `$` formatting for numeric budgets, and mobile layout improvements.
 
-## Run locally
+## Update existing GitHub + Render deployment
 
-Requires **Node.js 22+** (uses built-in `node:sqlite`, no npm install needed).
+Upload **the contents of this folder** to the root of your existing `Gather` GitHub repository, replacing `index.html`, `server.js`, `package.json`, `README.md`, `render.yaml`, and `.gitignore`. Do not create a new Render service or Blueprint. The existing Render Web Service should automatically deploy the commit. Its build command should be `npm install` and start command `npm start`; Node >=22.13.
 
-```bash
-node server.js
-```
+## Persistent storage — important
 
-Open http://localhost:3000 in your browser. Data is stored in `gather.db` alongside the server.
+By default Gather stores data in a local SQLite file, which is **temporary on Render Free**. To persist plans and voting across Render restarts, create a Turso/libSQL hosted database and an auth token, then set the following two environment variables on **Render > Gather > Environment**:
 
-## Share it with friends
+- `TURSO_DATABASE_URL` — the database URL, beginning `libsql://`.
+- `TURSO_AUTH_TOKEN` — a database access token. Treat it as a secret: only put it in Render's Environment settings, never GitHub or screenshots.
 
-Deploy this folder to a Node.js host with a **persistent disk** and run `node server.js`. Set `PORT` to the host's provided port if necessary (most hosts set this automatically). Set `DB_PATH` to a location on your persistent volume (for example `/data/gather.db`). Once hosted, use **Share link** inside an outing. `localhost` links work only on your own computer and are not public.
+After saving variables, deploy/restart the Render service. New outings will be stored in the hosted database. **Existing outings in Render's local database do not automatically migrate**. Retain old outing links for reference but recreate the existing sample outing on the new database unless you've exported/migrated it. The API will log `Gather database connected (hosted)` when successful.
 
-A platform with ephemeral storage will lose its database when restarted. For production, use hosted Postgres, secure authentication, rate limits, backups, and HTTPS. Do not expose the SQLite database file publicly.
+Before production use, add accounts or invite-specific access controls and abuse protection: anyone with an outing link may add an RSVP/suggestion and browser-token voting only discourages (does not prevent) repeated voting.
 
-## Voting privacy and limitations
+## Local use
 
-Each browser profile gets a random local token. The server only stores a SHA-256 hash of the token scoped to the outing, and tallies are hidden until an organizer reveals them. The server still sees the submitted token during requests; this is **not cryptographic anonymity** or verified one-person-one-vote. A friend using different browsers or clearing local storage may cast multiple votes. Treat this as a casual friend-group poll.
-
-Anyone with the outing link can suggest places and add a guest name. The organizer's admin key stays in that browser's local storage; don't clear browser data until you're finished organizing. There is no login or account recovery in this MVP.
-
-## Publish online
-
-See [DEPLOY.md](DEPLOY.md) for the Render guide. The included `render.yaml` configures a **paid** persistent disk; review charges before deploying.
+Install Node 22+, run `npm install` followed by `npm start`, and open `http://localhost:3000`. Without Turso variables it stores local data in `gather.db`.
