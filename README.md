@@ -1,22 +1,57 @@
-# Gather v3 — shared outing planner
+# Gather — make plans together
 
-Includes shareable outing links, place suggestions, optional anonymous voting, three-way RSVP (Going / Maybe / Can't make it), organizer-only editing, automatic `$` formatting for numeric budgets, and mobile layout improvements.
+**Gather** is a live group outing planner for friends who want to make plans without juggling endless messages. Create an outing, share its link, collect suggestions, RSVP and — when the group can't choose — run an optional anonymous destination vote.
 
-## Update existing GitHub + Render deployment
+**[Try the live app](https://gather-ueck.onrender.com)**
 
-Upload **the contents of this folder** to the root of your existing `Gather` GitHub repository, replacing `index.html`, `server.js`, `package.json`, `README.md`, `render.yaml`, and `.gitignore`. Do not create a new Render service or Blueprint. The existing Render Web Service should automatically deploy the commit. Its build command should be `npm install` and start command `npm start`; Node >=22.13.
+## Features
 
-## Persistent storage — important
+- **Outing details:** Set a title, date, time, area, per-person budget and description; organizers can edit these later.
+- **Shareable links:** Everyone can open the same plan from a phone or computer, with no account required.
+- **Group suggestions:** Add places or activities for everyone to consider.
+- **RSVP tracking:** Friends can respond Going, Maybe or Can't make it.
+- **Optional voting:** Participants can vote on suggested places, change their choice while voting is open, and see the results when the organizer reveals them.
+- **Persistent storage:** A hosted Turso database keeps new event details, suggestions, RSVPs and votes across Render restarts.
+- **Responsive UI:** A mobile-friendly interface with basic accessibility improvements.
 
-By default Gather stores data in a local SQLite file, which is **temporary on Render Free**. To persist plans and voting across Render restarts, create a Turso/libSQL hosted database and an auth token, then set the following two environment variables on **Render > Gather > Environment**:
+## Built with
 
-- `TURSO_DATABASE_URL` — the database URL, beginning `libsql://`.
-- `TURSO_AUTH_TOKEN` — a database access token. Treat it as a secret: only put it in Render's Environment settings, never GitHub or screenshots.
+| Layer | Technology |
+| --- | --- |
+| Frontend | HTML, CSS and vanilla JavaScript |
+| Backend | Node.js HTTP server |
+| Database | Turso (libSQL / SQLite) |
+| Deployment | GitHub + Render |
 
-After saving variables, deploy/restart the Render service. New outings will be stored in the hosted database. **Existing outings in Render's local database do not automatically migrate**. Retain old outing links for reference but recreate the existing sample outing on the new database unless you've exported/migrated it. The API will log `Gather database connected (hosted)` when successful.
+## How it works
 
-Before production use, add accounts or invite-specific access controls and abuse protection: anyone with an outing link may add an RSVP/suggestion and browser-token voting only discourages (does not prevent) repeated voting.
+1. Create an outing with the date, area and budget.
+2. Share its unique link with friends.
+3. Friends suggest destinations and add their RSVP.
+4. If needed, open a destination vote and reveal the group result.
 
-## Local use
+## Run locally
 
-Install Node 22+, run `npm install` followed by `npm start`, and open `http://localhost:3000`. Without Turso variables it stores local data in `gather.db`.
+Requires Node.js 22.13 or newer.
+
+```bash
+npm install
+npm start
+```
+
+Visit `http://localhost:3000`.
+
+For hosted storage, set `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` in your environment. Without these, the app uses local storage on the server, which **is not persistent on Render Free**. Keep credentials out of commits and screenshots.
+
+## Deployment
+
+The project is deployed as a Render Web Service with `npm install` as the build command and `npm start` as the start command. To publish an update, push changes to `main` on GitHub; automatic deploys should pick them up.
+
+## Design limitations / future work
+
+Gather is an early personal project rather than a hardened production service. Vote choices are hidden from other participants, but voting isn't cryptographically anonymous. Each browser receives a private token, so a person using multiple browsers may cast more than one vote. Anyone with an event link can view it and make suggestions/RSVPs; invite controls, stronger organizer authentication, abuse prevention and guest identity management are future improvements.
+
+## Project links
+
+- **Live app:** https://gather-ueck.onrender.com
+- **Source code:** https://github.com/sanjanavup/Gather
