@@ -1,4 +1,4 @@
-# Gather — shared outing planner
+# Gather - shared outing planner
 
 A working full-stack version of Gather with cross-device outing links, suggestions, guest names, and optional anonymous destination voting.
 
